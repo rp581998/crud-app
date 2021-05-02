@@ -1,32 +1,28 @@
 require('dotenv').config();
 const http = require('http');
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
-// const bodyParser = require('body-parser');
-// const User = require('./Models/user');
 var Country = require('./Models/country');
-const { CLIENT_RENEG_LIMIT } = require('tls');
-const { nextTick } = require('process');
+var User = require('./Models/user');
 const router = express.Router();
+const dbConfig = require('./config/database.config');
+
+var corsOptions = {
+    origin: 'http://localhost:9001',
+    optionsSuccessStatus: 200 // For legacy browser support
+}
+
 
 router.use((req, res, next) => {
     console.log('We are connecting to the MongoDB...');
     next();
 })
 
-/*
-************* SIMPLE WEB SERVER WHICH RENDERS TEXT TO THE USER ********************
-const requestListener  = (req, res) => {
-    res.writeHead(200);
-    res.end('Hello, World');
-}
-const server = http.createServer(requestListener);
-server.listen(process.env.PORT)
-*/
-// MONGO_URL == mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb 
-
-mongoose.connect('mongodb://127.0.0.1:27017/test', { useNewUrlParser: true });
+mongoose.connect(dbConfig.dbURI, { useNewUrlParser: true });
 const app = express();
+app.use(cors(corsOptions));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 const port = process.env.PORT || 4000;
@@ -45,9 +41,27 @@ router.route('/countries').post( (req, res) => {
 }    
 )
 
+router.route('/register').post( (req, res) => {
+    var user = new User();
+    user.first_name = req.body.first_name;
+    user.last_name = req.body.last_name;
+    user.email = req.body.email;
+    user.phone = req.body.phone;
+    user.address = req.body.address;
+    user.password = req.body.password;
+    user.save(function(err) {
+        if(err)
+            res.send('Error creating the country', err);
+        res.send({ message: 'Created a user in the database'});
+    })
+}    
+)
+
+
+
 app.use('/api', router);
 
-
+require('./routes/user.routes')(app);
 
 app.listen(port, () => 
     console.log(`Listening on port ${port}`)
