@@ -1,4 +1,4 @@
-### Steps to run this project
+# Steps to run this project
 
 ## Install mongodb on you system
 
