@@ -1,7 +1,13 @@
 const User = require('../Models/user');
 
+exports.get = (req, res) => {
+    res.json({ message: 'Hello from Express from different file'});
+}
+
+
 exports.create = (req, res) => {
-    if (!req.body.content) {
+    res.header("Access-Control-Allow-Origin", "*");
+    if (!req.body) {
         return res.status(400).send({
             message: 'form cannot be empty'
         })
@@ -17,11 +23,22 @@ exports.create = (req, res) => {
         }
     )
     user.save()
-        .then(data => {
+        .then(data => {            
             res.send(data);
         }).catch(err => {
             res.status(500).send({
                 message: err.message || "there is error registering the user"
             });
         });
+}
+
+exports.getProfiles = async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    const profiles = await User.find({});
+
+    try {
+        res.send(profiles);
+      } catch (error) {
+        response.status(500).send(error);
+      }
 }
