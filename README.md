@@ -1,6 +1,6 @@
 # Steps to run this project
 
-## Install mongodb on you system
+## Install mongodb on your system
 
 ## run the mongod server
 
