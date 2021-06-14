@@ -42,3 +42,16 @@ exports.getProfiles = async (req, res) => {
         response.status(500).send(error);
       }
 }
+
+
+exports.deleteProfile = async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    const profile = await User.deleteOne({"email":req.body.email});
+    const profiles = await User.find({});
+    try {
+        res.send(profiles);
+      } catch (error) {
+        response.status(500).send(error);
+      }
+}
+

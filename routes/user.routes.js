@@ -3,4 +3,5 @@ module.exports = (app) => {
     app.get("/", users.get);
     app.post('/register', users.create);
     app.get("/profiles", users.getProfiles);
+    app.put("/delete", users.deleteProfile)
 }
